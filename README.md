@@ -7,6 +7,9 @@ void main() {
   Success<int> intResult = Success(9);
   print(intResult.value);
 
+  Success r2 = intResult;
+  int v = r2.getValue();
+
   Result r = Success("Hello", extra: {"offset": 9});
   if (r case Success(value: String v, extra: {"offset": int offset})) {
     print("value: $v, offset: $offset ");
