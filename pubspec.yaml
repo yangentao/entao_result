@@ -1,0 +1,16 @@
+name: entao_result
+description: Result, success, failure.
+version: 1.0.0
+repository: https://github.com/yangentao/entao_result
+homepage: https://github.com/yangentao/entao_result
+
+environment:
+  sdk: ^3.5.0
+
+# Add regular dependencies here.
+#dependencies:
+# path: ^1.9.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
