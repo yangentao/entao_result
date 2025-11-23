@@ -3,3 +3,6 @@
 
 ## 1.0.1
 * extend methods
+
+## 1.0.2
+* extend Result and Success

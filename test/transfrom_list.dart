@@ -11,7 +11,7 @@ void main() {
 
   test('transform', () async {
     Success r = Success(223);
-    String s = r.transform((int n) => n.toString());
+    String s = r.mapValue((int n) => n.toString());
     println(s);
     expect(s, equals("223"));
   });

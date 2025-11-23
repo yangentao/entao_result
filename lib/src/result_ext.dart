@@ -41,24 +41,18 @@ extension SuccessTransformEx on Success {
   }
 
   R model<R>(R Function(Map<String, dynamic>) mapper) {
-    return transform(mapper);
+    return mapValue(mapper);
   }
 
   List<R> listModel<R>(R Function(Map<String, dynamic>) itemMaper) {
-    return transformList((Map<String, dynamic> e) {
-      return itemMaper(e);
-    });
-  }
-
-  List<R> listValue<R, T>(R Function(T) itemMaper) {
-    return transformList(itemMaper);
+    return listValue(itemMaper);
   }
 
   List<R> list<R>() {
-    return transformList((R e) => e);
+    return listValue((R e) => e);
   }
 
-  List<R> transformList<R, T>(R Function(T) itemMaper) {
+  List<R> listValue<R, T>(R Function(T) itemMaper) {
     if (this case Success(value: List<dynamic> ls)) {
       Iterable<T> ts = ls.map((e) => e as T);
       return ts.map(itemMaper).toList();
@@ -66,7 +60,7 @@ extension SuccessTransformEx on Success {
     throw "Bad type";
   }
 
-  R transform<R, T>(R Function(T) maper) {
+  R mapValue<R, T>(R Function(T) maper) {
     if (this case Success(value: T v)) {
       return maper(v);
     }

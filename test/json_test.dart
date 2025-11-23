@@ -15,7 +15,7 @@ void main() {
   test('transform', () async {
     dynamic jv = json.decode("223");
     Success ok = Success(jv);
-    String s = ok.transform((int n) => n.toString());
+    String s = ok.mapValue((int n) => n.toString());
     println(s);
     expect(s, equals("223"));
 
@@ -36,7 +36,7 @@ void main() {
       List<int> ls = ok.list();
       println(ls);
       expect(ls, equals([1, 2, 3]));
-      List<String> sls = ok.transformList((e) => e.toString());
+      List<String> sls = ok.listValue((e) => e.toString());
       println(sls);
       expect(sls, equals(["1", "2", "3"]));
 
