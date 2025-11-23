@@ -2,9 +2,9 @@ import 'package:entao_result/entao_result.dart';
 import 'package:println/println.dart';
 
 void main() {
-  // dump(Success([A()]));
+  dump(Success([A()]));
   dump(Success([B()]));
-  // dump(Success([C()]));
+  dump(Success([C()]));
 }
 
 void dump(Success ok) {
