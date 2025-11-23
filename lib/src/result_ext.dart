@@ -1,16 +1,24 @@
 part of '../entao_result.dart';
 
 extension ResultMapExt on Result {
+  Result<V> casted<V>() {
+    switch (this) {
+      case Success ok:
+        if (ok.value is V) return Success(ok.value as V);
+        _typeError(V, ok.value);
+      case Failure e:
+        return e;
+    }
+  }
+
   Result<R> map<R, T>(R Function(T) mapper) {
     switch (this) {
       case Failure e:
         return e;
       case Success(value: T v, extra: dynamic ex):
         return Success(mapper(v), extra: ex);
-      case Success<dynamic>(value: null):
-        throw "Value is null";
-      case Success<dynamic>(value: Object v):
-        throw "type does not match: $v";
+      case Success ok:
+        _typeError(T, ok.value);
     }
   }
 
@@ -18,14 +26,10 @@ extension ResultMapExt on Result {
     switch (this) {
       case Failure e:
         return e;
-      case Success(value: List<dynamic> v, extra: dynamic ex):
-        List<R> ls = v.map((a) => a as T).map(mapper).toList();
-        return Success(ls, extra: ex);
-      case Success<dynamic>(value: Object v):
-        throw "Type does not match: $v";
-      case Success<dynamic>(value: null):
-        if (nullToEmpty) return Success([]);
-        throw "Value is null";
+      case Success ok:
+        if (nullToEmpty && ok.value == null) return Success([], extra: ok.extra);
+        List<R> ls = ok.listValue(mapper);
+        return Success(ls, extra: ok.extra);
     }
   }
 }
@@ -54,24 +58,30 @@ extension SuccessTransformEx on Success {
 
   List<R> listValue<R, T>(R Function(T) itemMaper) {
     if (this case Success(value: List<dynamic> ls)) {
-      Iterable<T> ts = ls.map((e) => e as T);
+      Iterable<T> ts = ls.map((e) {
+        if (e is T) return e;
+        _typeError(T, e);
+      });
       return ts.map(itemMaper).toList();
+    } else {
+      _typeError(T, value);
     }
-    throw "Bad type";
   }
 
   R mapValue<R, T>(R Function(T) maper) {
     if (this case Success(value: T v)) {
       return maper(v);
+    } else {
+      _typeError(T, value);
     }
-    throw "Bad type";
   }
 
   R getValue<R>() {
     if (this case Success(value: R v)) {
       return v;
+    } else {
+      _typeError(R, value);
     }
-    throw "Bad type";
   }
 }
 
@@ -138,4 +148,8 @@ List<T> _dataTableFromList<T>({required List<List<dynamic>> rows, required T Fun
     models.add(maper(map));
   }
   return models;
+}
+
+Never _typeError(Type type, dynamic value) {
+  throw "Type error. target type: $type, value: $value";
 }

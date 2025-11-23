@@ -6,3 +6,6 @@
 
 ## 1.0.2
 * extend Result and Success
+
+## 1.0.3
+* add casted()

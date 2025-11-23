@@ -2,18 +2,46 @@ import 'package:entao_result/entao_result.dart';
 import 'package:println/println.dart';
 
 void main() {
-  // String j = """["a","b","c"]""";
-  // dynamic v = json.decode(j );
-  // Success ok = Success(v);
-  // Result r = ok ;
-  // println(ok.tryValue());
-  // List<String> ls = ok.list();
-  // println(ls);
+  // dump(Success([A()]));
+  dump(Success([B()]));
+  // dump(Success([C()]));
+}
 
-  List<String> strList = ["a", "ab", "abc"];
-  Result<List<String>> rs = Success(strList);
-  println(rs.tryValue());
-  rs.onSuccess((ls) {
-    println(ls);
-  });
+void dump(Success ok) {
+  if (ok case Success(value: List<dynamic> ls)) {
+    println("listDynamic: ", ls);
+  }
+
+  if (ok case Success(value: List<A> ls)) {
+    println("listA: ", ls);
+  }
+
+  if (ok case Success(value: List<B> ls)) {
+    println("listB: ", ls);
+  }
+  if (ok case Success(value: List<C> ls)) {
+    println("listC: ", ls);
+  }
+  println("--------");
+}
+
+class A {
+  @override
+  String toString() {
+    return "A";
+  }
+}
+
+class B extends A {
+  @override
+  String toString() {
+    return "B";
+  }
+}
+
+class C extends A {
+  @override
+  String toString() {
+    return "C";
+  }
 }
