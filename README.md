@@ -1,5 +1,5 @@
 ## Features
-Result, success, failure.  
+Result, success, failure.  mostly used for json.
  
 ## Basic
 ```dart  

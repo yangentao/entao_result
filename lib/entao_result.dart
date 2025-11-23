@@ -10,8 +10,15 @@ sealed class Result<T> {
 
   bool get failed => this is Failure;
 
-  R? onValue<V, R>(R? Function(V) callback) {
-    if (this case Success(value: V v)) {
+  T? tryValue() {
+    if (this case Success(value: T v)) {
+      return v;
+    }
+    return null;
+  }
+
+  R? onSuccess<R>(R? Function(T) callback) {
+    if (this case Success(value: T v)) {
       return callback(v);
     }
     return null;

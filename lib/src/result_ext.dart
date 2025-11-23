@@ -1,48 +1,83 @@
 part of '../entao_result.dart';
 
+extension ResultMapExt on Result {
+  Result<R> map<R, T>(R Function(T) mapper) {
+    switch (this) {
+      case Failure e:
+        return e;
+      case Success(value: T v, extra: dynamic ex):
+        return Success(mapper(v), extra: ex);
+      case Success<dynamic>(value: null):
+        throw "Value is null";
+      case Success<dynamic>(value: Object v):
+        throw "type does not match: $v";
+    }
+  }
+
+  Result<List<R>> mapList<R, T>(R Function(T) mapper, {bool nullToEmpty = true}) {
+    switch (this) {
+      case Failure e:
+        return e;
+      case Success(value: List<dynamic> v, extra: dynamic ex):
+        List<R> ls = v.map((a) => a as T).map(mapper).toList();
+        return Success(ls, extra: ex);
+      case Success<dynamic>(value: Object v):
+        throw "Type does not match: $v";
+      case Success<dynamic>(value: null):
+        if (nullToEmpty) return Success([]);
+        throw "Value is null";
+    }
+  }
+}
+
 extension SuccessTransformEx on Success {
   /// ["id", "name", "score"]
   /// [1000, "Tom", 90]
   /// [1001, "Jerry", 80]
   /// like csv format, first line is column names , rest is data
-  List<T> table<T>(T Function(Map<String, dynamic>) maper) {
-    return transform((List<List<dynamic>> rows) {
-      return _dataTableFromList(rows: rows, maper: maper);
-    });
+  List<T> table<T>(T Function(Map<String, dynamic>) itemMaper) {
+    List<List<dynamic>> rows = list();
+    return _dataTableFromList(rows: rows, maper: itemMaper);
   }
 
   R model<R>(R Function(Map<String, dynamic>) mapper) {
     return transform(mapper);
   }
 
-  List<R> listModel<R>(R Function(Map<String, dynamic>) mapper) {
-    return transform((List<Map<String, dynamic>> ls) {
-      return ls.map(mapper).toList();
+  List<R> listModel<R>(R Function(Map<String, dynamic>) itemMaper) {
+    return transformList((Map<String, dynamic> e) {
+      return itemMaper(e);
     });
   }
 
-  List<R> listValue<R, T>(R Function(T) mapper) {
-    return transform((List<T> ls) {
-      return ls.map(mapper).toList();
-    });
+  List<R> listValue<R, T>(R Function(T) itemMaper) {
+    return transformList(itemMaper);
   }
 
   List<R> list<R>() {
-    return transform((List<R> ls) => ls);
+    return transformList((R e) => e);
+  }
+
+  List<R> transformList<R, T>(R Function(T) itemMaper) {
+    if (this case Success(value: List<dynamic> ls)) {
+      Iterable<T> ts = ls.map((e) => e as T);
+      return ts.map(itemMaper).toList();
+    }
+    throw "Bad type";
   }
 
   R transform<R, T>(R Function(T) maper) {
     if (this case Success(value: T v)) {
       return maper(v);
     }
-    throw Exception("Bad type");
+    throw "Bad type";
   }
 
   R getValue<R>() {
     if (this case Success(value: R v)) {
       return v;
     }
-    throw Exception("Bad type");
+    throw "Bad type";
   }
 }
 
