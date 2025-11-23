@@ -4,7 +4,7 @@ extension ResultMapExt on Result {
   Result<V> casted<V>() {
     switch (this) {
       case Success ok:
-        if (ok.value is V) return Success(ok.value as V);
+        if (ok.value is V) return Success(ok.value as V, extra: ok.extra);
         _typeError(V, ok.value);
       case Failure e:
         return e;
@@ -18,16 +18,17 @@ extension ResultMapExt on Result {
       case Success(value: T v, extra: dynamic ex):
         return Success(mapper(v), extra: ex);
       case Success ok:
+        if (null is R && ok.value == null) return Success(null as R, extra: ok.extra);
         _typeError(T, ok.value);
     }
   }
 
-  Result<List<R>> mapList<R, T>(R Function(T) mapper, {bool nullToEmpty = true}) {
+  Result<List<R>> mapList<R, T>(R Function(T) mapper) {
     switch (this) {
       case Failure e:
         return e;
       case Success ok:
-        if (nullToEmpty && ok.value == null) return Success([], extra: ok.extra);
+        if (ok.value == null) return Success([], extra: ok.extra);
         List<R> ls = ok.listValue(mapper);
         return Success(ls, extra: ok.extra);
     }
@@ -63,17 +64,17 @@ extension SuccessTransformEx on Success {
         _typeError(T, e);
       });
       return ts.map(itemMaper).toList();
-    } else {
-      _typeError(T, value);
     }
+    if (value == null) return [];
+    _typeError(T, value);
   }
 
   R mapValue<R, T>(R Function(T) maper) {
     if (this case Success(value: T v)) {
       return maper(v);
-    } else {
-      _typeError(T, value);
     }
+    if (null is R && value == null) return null as R;
+    _typeError(T, value);
   }
 
   R getValue<R>() {

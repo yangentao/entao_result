@@ -9,3 +9,6 @@
 
 ## 1.0.3
 * add casted()
+
+## 1.0.4
+* null case.
