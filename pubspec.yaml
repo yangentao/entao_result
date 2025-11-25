@@ -5,7 +5,8 @@ repository: https://github.com/yangentao/entao_result
 homepage: https://github.com/yangentao/entao_result
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.6.0
+resolution: workspace
 
 # Add regular dependencies here.
 #dependencies:
